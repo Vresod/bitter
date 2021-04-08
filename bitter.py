@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask import json
 from flask.json import jsonify
+from flask import render_template
 app = Flask(__name__)
 import json
 
@@ -18,6 +19,15 @@ def get_post_posts():
 	else: # make new bleet
 		posts.append({"content":request.form['content']})
 		return jsonify(posts)
+	
+@app.route('/',methods=['GET'])
+def index():
+	output = ""
+	for x in posts:
+		output += f"<p>{x['content']}</p>\n"
+	print(output)
+	return output
+
 
 @app.errorhandler(404)
 def http404(e):
