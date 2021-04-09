@@ -25,7 +25,12 @@ def remove_value_from_dict(dictionary:dict,value):
 			del a[val]
 	return a 
 
-def get_account(accounts,id:int):
+def get_account(accounts,id):
+	"""
+	accounts is the list of Accounts
+	id is anything that can be converted to int
+	"""
+	id = int(id)
 	for account in accounts:
 		if account.id == id:
 			return account
