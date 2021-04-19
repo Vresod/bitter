@@ -20,7 +20,15 @@ POST /posts = make post, return all posts
 @app.route('/posts',methods=['GET','POST'])
 def get_post_posts():
 	if request.method == 'GET': # return list of bleet
-		return jsonify(posts)
+		id = request.args.get('id', '')
+		if id == "":
+			return jsonify(posts)
+		else:
+			try:
+				id = int(id)
+				return posts[id]
+			except IndexError:
+				return "This isnt a real post! Please try a different id or try again later"
 	else: # make new bleet
 		if type(request.form) == ImmutableMultiDict:
 			temp = list(request.form)
