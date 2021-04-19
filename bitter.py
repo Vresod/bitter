@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import json
+import requests
+import asyncio
 
 from flask.wrappers import Request
 import extra
@@ -31,7 +33,12 @@ def get_post_posts():
 def index():
 	output = ""
 	for x in posts:
-		output += f"<p>{x['content']}</p>\n"
+		if x['author_id'] == 0:
+			poster = 'anon'
+		else:
+			poster = extra.get_account(accounts,x['author_id']).to_dict()
+			poster = poster['name']
+		output += f"<p>{poster}<br>{x['content']}</p>\n"
 	print(output)
 	return output
 
