@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import json
 import requests
 import asyncio
+from werkzeug.datastructures import ImmutableMultiDict
 
 from flask.wrappers import Request
 import extra
@@ -21,7 +22,12 @@ def get_post_posts():
 	if request.method == 'GET': # return list of bleet
 		return jsonify(posts)
 	else: # make new bleet
-		form = dict(request.form)
+		if type(request.form) == ImmutableMultiDict:
+			temp = list(request.form)
+			print(temp[0])
+			form = json.loads(temp[0])
+		else:
+			form = dict(request.form)
 		if 'id' not in form:
 			form['id'] = 0
 		elif hashlib.sha256(form.get('password').encode()).hexdigest() != extra.get_account(accounts,int(form['id'])).to_dict(internal=True)['passhash']:
@@ -31,7 +37,7 @@ def get_post_posts():
 
 @app.route('/',methods=['GET'])
 def index():
-	output = ""
+	output = open("index.html","rt").read()
 	for x in posts:
 		if x['author_id'] == 0:
 			poster = 'anon'
@@ -39,7 +45,7 @@ def index():
 			poster = extra.get_account(accounts,x['author_id']).to_dict()
 			poster = poster['name']
 		output += f"<p>{poster}<br>{x['content']}</p>\n"
-	print(output)
+	output += "</html>"
 	return output
 
 @app.route('/accounts',methods=['GET','POST'])
