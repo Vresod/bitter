@@ -46,7 +46,7 @@ def get_post_posts():
 @app.route('/',methods=['GET'])
 def index():
 	output = open("index.html","rt").read()
-	for x in posts:
+	for x in posts[::-1]:
 		if x['author_id'] == 0:
 			poster = 'anon'
 		else:
