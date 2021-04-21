@@ -1,15 +1,26 @@
-<script type="text/javascript">
-	var xhttp = new XMLHttpRequest();
-	function send () {
-		post = document.getElementById('postBox').value
-		xhttp.open("POST", "http://localhost:5000/posts", true);
-		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhttp.send(`{"content":"${post}"}`)
-		console.log(`saying ${post}`)
-		location.reload();
-	}
-</script>
+<!DOCTYPE html>
 <html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>bitter</title>
+	<script type="application/javascript">
+		function formsubmit() {
+			var posts = document.getElementById("posts");
+			
+		}
+	</script>
+	<link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
 
-	<input name="post" type="text" maxlength="512" id="postBox"/>
-	<input name="post" type="button" onclick="send();" value="Post!">
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
+<form method="POST" action="/posts" target="dummyframe">
+	<input name="content" type="text" maxlength="512" id="postBox"/>
+	<input type="submit" value="Post" onclick="formsubmit()">
+</form>
+
+<div id="posts">
+<!--<<POSTS GO HERE>>-->
+</div>
+</body>
