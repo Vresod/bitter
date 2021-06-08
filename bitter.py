@@ -1,11 +1,10 @@
 from flask import Flask, request, jsonify, abort
-import extra
-import hashlib
+from backend import Account, validate_account
 
 app = Flask(__name__)
 
 posts = []
-accounts = [extra.Account("anon","",0)]
+accounts = {"anon":Account("anon","")}
 
 """
 DESIGN:
@@ -13,18 +12,16 @@ GET /posts = return all posts
 POST /posts = make post, return all posts
 """
 
-
 @app.route('/posts',methods=['GET','POST'])
 def get_post_posts():
 	if request.method == 'GET': # return list of bleet
 		return jsonify(posts)
 	else: # make new bleet
 		form = dict(request.form)
-		if 'id' not in form:
-			form['id'] = 0
-		elif hashlib.sha256(form.get('password').encode()).hexdigest() != extra.get_account(accounts,int(form['id'])).to_dict(internal=True)['passhash']:
+		valid = validate_account(accounts,request.authorization)
+		if not valid:
 			abort(403)
-		posts.append({"content":form['content'],"author_id":form['id']})
+		posts.append({"content":form['content'],"author_id":valid.id})
 		return jsonify(posts), 201
 
 @app.route('/',methods=['GET'])
@@ -32,7 +29,7 @@ def index():
 	with open("index.html","r")as indexhtml: output = indexhtml.read()
 	txt_posts = ""
 	for post in posts[::-1]:
-		poster = extra.get_account(accounts,post['author_id']).to_dict()['name']
+		poster = get_account(accounts,post['author_id']).to_dict()['name']
 		txt_posts += f"<p>{poster}</p>\n<p>{post['content']}</p>\n\n"
 	output = output.replace("<!--<<POSTS GO HERE>>-->",txt_posts)
 	return output
@@ -46,13 +43,13 @@ def get_post_accounts():
 		return jsonify(accounts_no_passhash)
 	else: # making an account
 		form = dict(request.form)
-		account = extra.Account.from_dict(form,len(accounts))
+		account = Account.from_dict(form)
 		accounts.append(account)
 		return account.to_dict(), 201
 
 @app.route('/accounts/<int:id>',methods=['GET'])
 def get_account(id):
-	return extra.get_account(accounts,int(id)).to_dict()
+	return accounts
 
 @app.route('/posts/<int:id>',methods=['GET'])
 def get_post(id):
@@ -69,3 +66,6 @@ def http404(e):
 @app.errorhandler(403)
 def http403(e):
 	return {"message":"403 Forbidden","code":403}, 403
+@app.errorhandler(401)
+def http403(e):
+	return {"message":"401 Unauthorized","code":401}, 401
