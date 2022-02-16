@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, render_template, request, jsonify, abort
 from backend import *
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ POST /posts = make post, return all posts
 @app.route('/posts',methods=['GET','POST'])
 def get_post_posts():
 	if request.method == 'GET': # return list of bites
-		return get_posts()
+		return str(get_posts())
 	else: # make new bite
 		form = dict(request.form)
 		if request.authorization is None:
@@ -27,14 +27,7 @@ def get_post_posts():
 
 @app.route('/',methods=['GET'])
 def index():
-	with open("index.html","r")as indexhtml: output = indexhtml.read()
-	txt_posts = ""
-	posts = get_posts()
-	for post in posts[::-1]:
-		poster = get_account(post['id']).to_dict()['name']
-		txt_posts += f"<p>{poster}</p>\n<p>{post['content']}</p>\n\n"
-	output = output.replace("<!--<<POSTS GO HERE>>-->",txt_posts)
-	return output
+	return render_template('index.html',posts=get_posts())
 
 @app.route('/accounts',methods=['GET','POST'])
 def get_post_accounts():
@@ -56,7 +49,8 @@ def get_account(id):
 @app.route('/posts/<int:id>',methods=['GET'])
 def get_post(id):
 	try:
-		return posts[id]
+		posts = get_posts()
+		return posts[str(id)]
 	except IndexError as e:
 		abort(404)
 

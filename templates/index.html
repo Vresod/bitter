@@ -6,7 +6,6 @@
 	<script type="application/javascript">
 		function formsubmit() {
 			var posts = document.getElementById("posts");
-			
 		}
 	</script>
 	<link rel="stylesheet" href="/static/index.css">
@@ -19,8 +18,11 @@
 	<input name="content" type="text" maxlength="512" id="postBox"/>
 	<input type="submit" value="Post" onclick="formsubmit()">
 </form>
-
-<div id="posts">
-<!--<<POSTS GO HERE>>-->
-</div>
+<ul id="posts">
+	{% for x in posts %}
+		<div id="{{ x['content'] }} - {{ x['author_id'] }}">
+			<p><b>{{ x['author_id'] }}</b><br>{{ x['content'] }}</p>
+		</div>
+	{% endfor %}
+</ul>
 </body>

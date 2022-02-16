@@ -25,7 +25,9 @@ def get_account(id):
 
 def get_posts():
 	with open("jsonfiles/posts.json","r") as postsraw:
-		return json.loads(postsraw.read())
+		x = json.loads(postsraw.read())
+		posts = x[::-1]
+		return posts
 
 def make_post(content,author_id):
 	with open("jsonfiles/posts.json","r") as postsraw:
