@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify, abort
-from backend import Account, validate_account
+from backend import *
 
 app = Flask(__name__)
 
 posts = []
-accounts = {"anon":Account("anon","")}
+accounts = [{'id':'anon'}]
 
 """
 DESIGN:
@@ -14,22 +14,24 @@ POST /posts = make post, return all posts
 
 @app.route('/posts',methods=['GET','POST'])
 def get_post_posts():
-	if request.method == 'GET': # return list of bleet
-		return jsonify(posts)
-	else: # make new bleet
+	if request.method == 'GET': # return list of bites
+		return get_posts()
+	else: # make new bite
 		form = dict(request.form)
-		valid = validate_account(accounts,request.authorization)
-		if not valid:
-			abort(403)
-		posts.append({"content":form['content'],"author_id":valid.id})
-		return jsonify(posts), 201
+		if request.authorization is None:
+			author_id = 'anon'
+		else:
+			valid = validate_account(request.authorization)
+			author_id = valid.id
+		return make_post(content=form['content'],author_id=author_id)
 
 @app.route('/',methods=['GET'])
 def index():
 	with open("index.html","r")as indexhtml: output = indexhtml.read()
 	txt_posts = ""
+	posts = get_posts()
 	for post in posts[::-1]:
-		poster = get_account(accounts,post['author_id']).to_dict()['name']
+		poster = get_account(post['id']).to_dict()['name']
 		txt_posts += f"<p>{poster}</p>\n<p>{post['content']}</p>\n\n"
 	output = output.replace("<!--<<POSTS GO HERE>>-->",txt_posts)
 	return output
