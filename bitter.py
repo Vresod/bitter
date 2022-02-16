@@ -19,7 +19,7 @@ def get_post_posts():
 	else: # make new bite
 		form = dict(request.form)
 		if request.authorization is None:
-			author_id = 'anon'
+			author_id = 0
 		else:
 			valid = validate_account(request.authorization)
 			author_id = valid.id
@@ -38,13 +38,11 @@ def get_post_accounts():
 		return jsonify(accounts_no_passhash)
 	else: # making an account
 		form = dict(request.form)
-		account = Account.from_dict(form)
-		accounts.append(account)
-		return account.to_dict(), 201
+		return make_account(name=form['name'],password=form['pass'])
 
 @app.route('/accounts/<int:id>',methods=['GET'])
 def get_account(id):
-	return accounts
+	return get_accounts(id)
 
 @app.route('/posts/<int:id>',methods=['GET'])
 def get_post(id):

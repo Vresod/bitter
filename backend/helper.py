@@ -1,6 +1,7 @@
 import base64
 from .classes import AccountNotFoundError
 import json
+import argon2
 
 def remove_value_from_dict(dictionary:dict,value):
 	"""
@@ -15,13 +16,24 @@ def remove_value_from_dict(dictionary:dict,value):
 def validate_account(accounts,token):
 	id = base64.b64decode(token).split(":")[0]
 	if id.lower() == "anon": return True
-	account = get_account(accounts,id)
+	account = get_accounts(id)
 	return account if token == account.token else False
 
-def get_account(id):
+def get_accounts(id=None):
 	with open("jsonfiles/accounts.json","r") as accountsraw:
 		accounts = json.loads(accountsraw.read())
-		return accounts["id"]
+		if id is None:
+			return accounts
+		else:
+			return accounts[str(id)]
+
+def make_account(name,password):
+	with open("jsonfiles/accounts.json","r") as accountsraw:
+		accounts = json.loadins(accountsraw.read())
+		new_account = {'name':name,'pass':password}
+		accounts.append(new_account)
+	with open("jsonfiles/accounts.json","w") as accountsraw:
+		accountsraw.write(json.dumps(accounts))
 
 def get_posts():
 	with open("jsonfiles/posts.json","r") as postsraw:
