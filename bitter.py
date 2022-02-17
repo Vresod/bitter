@@ -12,7 +12,7 @@ GET /posts = return all posts
 POST /posts = make post, return all posts
 """
 
-@app.route('/posts',methods=['GET','POST'])
+@app.route('/api/posts',methods=['GET','POST'])
 def get_post_posts():
 	if request.method == 'GET': # return list of bites
 		return str(get_posts())
@@ -25,11 +25,15 @@ def get_post_posts():
 			author_id = valid.id
 		return make_post(content=form['content'],author_id=author_id)
 
+@app.route('/api/login',methods=['POST'])
+def get_post_login():
+	form = dict(request.form)
+
 @app.route('/',methods=['GET'])
 def index():
 	return render_template('index.html',posts=get_posts()[::-1],users=get_accounts())
 
-@app.route('/accounts',methods=['GET','POST'])
+@app.route('/api/accounts',methods=['GET','POST'])
 def get_post_accounts():
 	if request.method == 'GET': # DO NOT RETURN PASSHASH
 		accounts_no_passhash = []
@@ -40,14 +44,14 @@ def get_post_accounts():
 		form = dict(request.form)
 		return make_account(name=form['name'],password=form['pass'])
 
-@app.route('/likepost/<int:id>',methods=['post'])
-def post_likes(id):
+@app.route('/api/likepost/<int:id>',methods=['post'])
+def post_like(id):
 	like_post(id)
 	post = get_posts()
 	post = post[id]
 	return post
 
-@app.route('/accounts/<int:id>',methods=['GET'])
+@app.route('/api/accounts/<int:id>',methods=['GET'])
 def get_account(id):
 	return get_accounts(id)
 
@@ -55,9 +59,12 @@ def get_account(id):
 def get_post(id):
 	try:
 		posts = get_posts()
-		return posts[str(id)]
+		post = posts[id]
+		post['id'] = id
+		return render_template("focusedpost.html",post=post,users=get_accounts())
 	except IndexError as e:
 		abort(404)
+
 
 # handle http errors
 
