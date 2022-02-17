@@ -25,7 +25,7 @@
 	<input name="content" type="text" maxlength="512" id="postBox"/>
 	<input type="submit" value="Post" onclick="formsubmit()">
 </form>
-<ul id="posts"><ul id="users">
+
 	{% for x in posts %}
 		{% if x['comment_on'] == None %}
 			<div id="{{ x['id'] }}">
@@ -39,5 +39,4 @@
 			</div>
 		{% endif %}
 	{% endfor %}
-</ul></ul>
 </body>
