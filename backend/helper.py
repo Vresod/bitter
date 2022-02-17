@@ -59,3 +59,22 @@ def like_post(id):
 		liked_post['likes'] += 1
 	with open("jsonfiles/posts.json","w") as postsraw:
 		postsraw.write(json.dumps(posts))
+	
+def get_thread(lowest_id):
+	with open("jsonfiles/posts.json","r") as postsraw:
+		posts = json.loads(postsraw.read())
+	
+	lowest = posts[lowest_id]
+	thread = []
+	done = False
+	post = lowest
+	while not done:
+		thread.append(post)
+		if post['comment_on'] == None:
+			break
+		for x in posts:
+			if x['id'] == post['comment_on']:
+				post = x
+				break
+	thread.pop(0)
+	return thread[::-1]

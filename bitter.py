@@ -81,7 +81,7 @@ def get_post(id):
 			if x['comment_on'] == id:
 				comments.append(x)
 
-		return render_template("focusedpost.html",post=post,users=get_accounts(),comments=comments)
+		return render_template("focusedpost.html",post=post,users=get_accounts(),comments=comments,thread=get_thread(lowest_id=id))
 	except IndexError as e:
 		abort(404)
 

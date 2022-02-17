@@ -21,13 +21,13 @@
 <ul id="posts"><ul id="users">
 	{% for x in posts %}
 		{% if x['comment_on'] == None %}
-			<div id="{{ loop.revindex0 }}">
+			<div id="{{ x['id'] }}">
 				<p><b>{{ users[x['author_id']]['name'] }}</b><br>{{ x['content'] }}</p>
-				<form method="POST" action="/api/likepost/{{ loop.revindex0 }}" target="dummyframe">
-					<p>
-						<input type="submit" value="Like">
-						{{ x['likes'] }}
-					</p>
+				<form method="POST" action="/api/likepost/{{ x['id'] }}" target="dummyframe">
+					<input type="submit" value="{{ x['likes'] }} likes">
+				</form>
+				<form method="GET" action="/posts/{{ x['id'] }}">
+					<input type="submit" value="view comments">
 				</form>
 			</div>
 		{% endif %}
