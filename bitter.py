@@ -27,7 +27,7 @@ def get_post_posts():
 
 @app.route('/',methods=['GET'])
 def index():
-	return render_template('index.html',posts=get_posts())
+	return render_template('index.html',posts=get_posts()[::-1],users=get_accounts())
 
 @app.route('/accounts',methods=['GET','POST'])
 def get_post_accounts():
@@ -39,6 +39,13 @@ def get_post_accounts():
 	else: # making an account
 		form = dict(request.form)
 		return make_account(name=form['name'],password=form['pass'])
+
+@app.route('/likepost/<int:id>',methods=['post'])
+def post_likes(id):
+	like_post(id)
+	post = get_posts()
+	post = post[id]
+	return post
 
 @app.route('/accounts/<int:id>',methods=['GET'])
 def get_account(id):

@@ -1,5 +1,6 @@
 import hashlib
 import base64
+import argon2
 
 valid_chars = set("abcdefghijklmnopqrstuvwxyz-._~") # too lazy to write this out
 
@@ -7,7 +8,7 @@ class InvalidNameError(Exception): pass
 class AccountNotFoundError(Exception): pass
 
 class Account(object):
-	def __init__(self,id:str,password:str):
+	def __init__(self,id:int,password:str):
 		"""
 		Makes a new account. `id` is the username of the account.
 		"""
@@ -15,9 +16,7 @@ class Account(object):
 			if char not in valid_chars:
 				raise InvalidNameError("Invalid character '{}' in name".format(char))
 		self.id = id
-		password_secure = id + password
-		token_noencrypt = f"{id}:{hashlib.sha256(bytes(password_secure,'utf-8')).hexdigest()}"
-		self.token = base64.b64encode(bytes(token_noencrypt,'utf-8')).decode('utf-8')
+		self.token = base64.urlsafe_b64encode(argon2.argon2_hash(password,"password",argon_type=argon2.Argon2Type.Argon2_id))
 
 	def __repr__(self):
 		return "<Account id='{}'>".format(self.id)
