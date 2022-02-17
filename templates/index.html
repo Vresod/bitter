@@ -18,18 +18,19 @@
 	<input name="content" type="text" maxlength="512" id="postBox"/>
 	<input type="submit" value="Post" onclick="formsubmit()">
 </form>
-<ul id="posts">
-	<ul id="users">
+<ul id="posts"><ul id="users">
 	{% for x in posts %}
-		<div id="{{ loop.revindex0 }}">
-			<p><b>{{ users[x['author_id']]['name'] }}</b><br>{{ x['content'] }}</p>
-			<form method="POST" action="/api/likepost/{{ loop.revindex0 }}" target="dummyframe">
-				<p>
-					<input type="submit" value="Like">
-					{{ x['likes'] }}
-				</p>
-			</form>
-		</div>
+		{% if x['comment_on'] == None %}
+			<div id="{{ loop.revindex0 }}">
+				<p><b>{{ users[x['author_id']]['name'] }}</b><br>{{ x['content'] }}</p>
+				<form method="POST" action="/api/likepost/{{ loop.revindex0 }}" target="dummyframe">
+					<p>
+						<input type="submit" value="Like">
+						{{ x['likes'] }}
+					</p>
+				</form>
+			</div>
+		{% endif %}
 	{% endfor %}
 </ul></ul>
 </body>

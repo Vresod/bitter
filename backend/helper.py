@@ -42,10 +42,10 @@ def get_posts():
 		posts = x
 		return posts
 
-def make_post(content,author_id):
+def make_post(content,author_id,comment_on=None):
 	with open("jsonfiles/posts.json","r") as postsraw:
 		posts = json.loads(postsraw.read())
-		new_post = {'content':content,'author_id':author_id,'likes':0}
+		new_post = {'content':content,'author_id':author_id,'id':len(posts),'likes':0,'comment_on':comment_on}
 		posts.append(new_post)
 	with open("jsonfiles/posts.json","w") as postsraw:
 		postsraw.write(json.dumps(posts))

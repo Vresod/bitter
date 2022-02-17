@@ -23,7 +23,21 @@ def get_post_posts():
 		else:
 			valid = validate_account(request.authorization)
 			author_id = valid.id
-		return make_post(content=form['content'],author_id=author_id)
+		try:
+			comment_on = form['comment_on']
+		except KeyError:
+			comment_on = None
+		return make_post(content=form['content'],author_id=author_id,comment_on=comment_on)
+
+@app.route('/api/posts/<int:id>',methods=['POST'])
+def post_comment(id):
+	form = dict(request.form)
+	if request.authorization is None:
+		author_id = 0
+	else:
+		valid = validate_account(request.authorization)
+		author_id = valid.id
+	return make_post(content=form['content'],author_id=author_id,comment_on=id)
 
 @app.route('/api/login',methods=['POST'])
 def get_post_login():
@@ -61,7 +75,13 @@ def get_post(id):
 		posts = get_posts()
 		post = posts[id]
 		post['id'] = id
-		return render_template("focusedpost.html",post=post,users=get_accounts())
+
+		comments = []
+		for x in posts:
+			if x['comment_on'] == id:
+				comments.append(x)
+
+		return render_template("focusedpost.html",post=post,users=get_accounts(),comments=comments)
 	except IndexError as e:
 		abort(404)
 
