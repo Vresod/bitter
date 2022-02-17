@@ -45,7 +45,16 @@ def get_post_login():
 
 @app.route('/',methods=['GET'])
 def index():
-	return render_template('index.html',posts=get_posts()[::-1],users=get_accounts())
+	posts = get_posts()
+	for x in posts:
+		reply_count = 0
+		for y in posts:
+			if x['id'] == y['comment_on']:
+				reply_count += 1
+		x['reply_count'] = 0
+		x['reply_count'] = reply_count
+		posts[x['id']] = x
+	return render_template('index.html',posts=posts[::-1],users=get_accounts())
 
 @app.route('/api/accounts',methods=['GET','POST'])
 def get_post_accounts():
@@ -78,6 +87,12 @@ def get_post(id):
 
 		comments = []
 		for x in posts:
+			reply_count = 0
+			for y in posts:
+				if y['comment_on'] == x['id']:
+					reply_count += 1
+			x['reply_count'] = 0
+			x['reply_count'] = reply_count
 			if x['comment_on'] == id:
 				comments.append(x)
 

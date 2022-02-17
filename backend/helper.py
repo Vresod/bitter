@@ -66,15 +66,20 @@ def get_thread(lowest_id):
 	
 	lowest = posts[lowest_id]
 	thread = []
-	done = False
 	post = lowest
-	while not done:
+	while True:
 		thread.append(post)
 		if post['comment_on'] == None:
 			break
 		for x in posts:
+			for y in posts:
+				reply_count = 0
+				if y['comment_on'] == x['id']:
+					reply_count += 1
 			if x['id'] == post['comment_on']:
 				post = x
+				post['reply_count'] = 0
+				post['reply_count'] = reply_count
 				break
 	thread.pop(0)
 	return thread[::-1]

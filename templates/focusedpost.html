@@ -11,49 +11,52 @@
 	<link rel="stylesheet" href="/static/index.css">
 </head>
 <body>
-
+	<div id=top-bar>
+		<ul>
+			<li><a href="/">home</a></li>
+		</ul>
+		<h1>Bitter</h>
+	</div>
 <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 
-<ul id="post"><ul id="users"><ul id="comments"><ul id="thread">
-	{% for x in thread %}
-		<div id="{{ x['id'] }}">
-			<p><b>{{ users[x['author_id']]['name'] }}</b><br>{{ x['content'] }}</p>
-			<form method="POST" action="/api/likepost/{{ x['id'] }}" target="dummyframe">
-				<input type="submit" value="{{ x['likes'] }} likes">
-			</form>
-			<form method="GET" action="/posts/{{ x['id'] }}">
-				<input type="submit" value="view comments">
-			</form>
-		</div>
-	{% endfor %}
-	<hr>
 
-    <h2><b>{{ users[post['author_id']]['name'] }}</b></h2>
-    <p>{{ post['content'] }}</p>
-    <form method="POST" action="/api/likepost/{{ post['id'] }}" target="dummyframe">
-        <p>
-            <input type="submit" value="{{ post['likes'] }} likes">
-        </p>
-    </form>
+{% for x in thread %}
+	<div id="{{ x['id'] }}">
+		<p><b>{{ users[x['author_id']]['name'] }}</b><br>{{ x['content'] }}</p>
+		<form method="POST" action="/api/likepost/{{ x['id'] }}" target="dummyframe">
+			<input type="submit" value="{{ x['likes'] }} likes">
+		</form>
+		<form method="GET" action="/posts/{{ x['id'] }}">
+			<input type="submit" value="{{ x['reply_count'] }} comments">
+		</form>
+	</div>
+{% endfor %}
+<hr>
+
+<h2><b>{{ users[post['author_id']]['name'] }}</b></h2>
+<p>{{ post['content'] }}</p>
+<form method="POST" action="/api/likepost/{{ post['id'] }}" target="dummyframe">
+    <p>
+        <input type="submit" value="{{ post['likes'] }} likes">
+    </p>
+</form>
 
 
-	<form method="POST" action="/api/posts/{{ post['id'] }}" target="dummyframe">
-		<input name="content" type="text" maxlength="512" id="postBox">
-		<input type="submit" value="Comment" onclick="formsubmit()">
-	</form>
-	<hr>
+<form method="POST" action="/api/posts/{{ post['id'] }}" target="dummyframe">
+	<input name="content" type="text" maxlength="512" id="postBox">
+	<input type="submit" value="Comment" onclick="formsubmit()">
+</form>
+<hr>
 
-	{% for x in comments %}
-		<div id="{{ x['id'] }}">
-			<p><b>{{ users[x['author_id']]['name'] }}</b><br>{{ x['content'] }}</p>
-			<form method="POST" action="/api/likepost/{{ x['id'] }}" target="dummyframe">
-				<input type="submit" value="{{ x['likes'] }} likes">
-			</form>
-			<form method="GET" action="/posts/{{ x['id'] }}">
-				<input type="submit" value="view replies">
-			</form>
-		</div>
-	{% endfor %}
-
-</ul></ul></ul></ul>
+{% for x in comments %}
+	<div id="{{ x['id'] }}">
+		<p><b>{{ users[x['author_id']]['name'] }}</b><br>{{ x['content'] }}</p>
+		<form method="POST" action="/api/likepost/{{ x['id'] }}" target="dummyframe">
+			<input type="submit" value="{{ x['likes'] }} likes">
+		</form>
+		<form method="GET" action="/posts/{{ x['id'] }}">
+			<input type="submit" value="{{ x['reply_count'] }} replies">
+		</form>
+	</div>
+{% endfor %}
 </body>

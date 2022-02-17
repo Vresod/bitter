@@ -12,6 +12,13 @@
 </head>
 <body>
 
+	<div id=top-bar>
+		<ul>
+			<li><a href="/">home</a></li>
+		</ul>
+		<h1>Bitter</h>
+	</div>
+	
 <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 
 <form method="POST" action="/api/posts" target="dummyframe">
@@ -27,7 +34,7 @@
 					<input type="submit" value="{{ x['likes'] }} likes">
 				</form>
 				<form method="GET" action="/posts/{{ x['id'] }}">
-					<input type="submit" value="view comments">
+					<input type="submit" value="{{ x['reply_count'] }} comments">
 				</form>
 			</div>
 		{% endif %}
