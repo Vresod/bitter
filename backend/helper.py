@@ -13,13 +13,14 @@ def remove_value_from_dict(dictionary:dict,value):
 			del a[val]
 	return a 
 
-def validate_account(accounts,token):
-	id = base64.b64decode(token).split(":")[0]
-	if id.lower() == "anon": return True
-	account = get_accounts(id)
-	return account if token == account.token else False
+def validate_account(token):
+	print(token)
+	accounts = get_accounts()
+	for x in accounts:
+		if x['token'] == token:
+			return x.pop('token')
 
-def get_accounts(id=None): # MAKE THIS NOT RETURN THE PASSWORDS, I CANNOT BE ASSED TO DO IT RIGHT NOW -nick
+def get_accounts(id=None):
 	with open("jsonfiles/accounts.json","r") as accountsraw:
 		accounts = json.loads(accountsraw.read())
 		if id is None:
@@ -30,11 +31,20 @@ def get_accounts(id=None): # MAKE THIS NOT RETURN THE PASSWORDS, I CANNOT BE ASS
 def make_account(name,password):
 	with open("jsonfiles/accounts.json","r") as accountsraw:
 		accounts = json.loads(accountsraw.read())
-		new_account = {'name':name,'pass':password}
-		accounts.append(new_account)
+	token = str(base64.urlsafe_b64encode(argon2.argon2_hash(password,"password",argon_type=argon2.Argon2Type.Argon2_d)))
+	print(token, "\n")
+	token = token.split("'")
+	print(token, "\n")
+	token = token[1]
+	print(token, "\n")
+
+	new_account = {"name":name,"token":token,"id":len(accounts)}
+	accounts.append(new_account)
+
 	with open("jsonfiles/accounts.json","w") as accountsraw:
 		accountsraw.write(json.dumps(accounts))
-	return new_account
+
+	return token
 
 def get_posts():
 	with open("jsonfiles/posts.json","r") as postsraw:

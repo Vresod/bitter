@@ -15,28 +15,34 @@ POST /posts = make post, return all posts
 @app.route('/api/posts',methods=['GET','POST'])
 def get_post_posts():
 	if request.method == 'GET': # return list of bites
-		return str(get_posts())
+		return # make login function
 	else: # make new bite
+		print(request.authorization)
 		form = dict(request.form)
+
 		if request.authorization is None:
 			author_id = 0
 		else:
 			valid = validate_account(request.authorization)
-			author_id = valid.id
+			author_id = valid['id']
+
 		try:
 			comment_on = form['comment_on']
 		except KeyError:
 			comment_on = None
+
 		return make_post(content=form['content'],author_id=author_id,comment_on=comment_on)
 
 @app.route('/api/posts/<int:id>',methods=['POST'])
 def post_comment(id):
 	form = dict(request.form)
+
 	if request.authorization is None:
 		author_id = 0
 	else:
 		valid = validate_account(request.authorization)
 		author_id = valid.id
+
 	return make_post(content=form['content'],author_id=author_id,comment_on=id)
 
 @app.route('/api/login',methods=['POST'])
@@ -57,15 +63,15 @@ def index():
 	return render_template('index.html',posts=posts[::-1],users=get_accounts())
 
 @app.route('/api/accounts',methods=['GET','POST'])
-def get_post_accounts():
+def get_post_accounts(): # making account: {'name':name.'pass':password}
 	if request.method == 'GET': # DO NOT RETURN PASSHASH
 		accounts_no_passhash = []
 		for account in accounts:
-			accounts_no_passhash.append(account.to_dict())
+			accounts_no_passhash.append({'name':account['name']})
 		return jsonify(accounts_no_passhash)
 	else: # making an account
 		form = dict(request.form)
-		return make_account(name=form['name'],password=form['pass'])
+		return make_account(name=form['name'],password=form['password'])
 
 @app.route('/api/likepost/<int:id>',methods=['post'])
 def post_like(id):
